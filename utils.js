@@ -8,38 +8,28 @@ function createShader(type, source) {
     return shader;
 }
 
-const { vec3, mat4 } = glMatrix;
+function bezier3(p0, p1, p2, p3, t) {
+    a0 = ((1 - t) ** 3);
+    a1 = 3 * ((1 - t) ** 2) * t;
+    a2 = 3 * (1 - t) * (t ** 2);
+    a3 = (t ** 3);
 
-// function lookAtMatrix(position, target, worldUp) {
-//     // Create vectors
-//     const zaxis = vec3.normalize(vec3.create(), vec3.subtract(vec3.create(), position, target));
-//     const xaxis = vec3.normalize(vec3.create(), vec3.cross(vec3.create(), vec3.normalize(vec3.create(), worldUp), zaxis));
-//     const yaxis = vec3.cross(vec3.create(), zaxis, xaxis);
-//
-//     // Create rotation matrix
-//     const rotation = mat4.create();
-//     rotation[0] = xaxis[0];
-//     rotation[1] = xaxis[1];
-//     rotation[2] = xaxis[2];
-//
-//     rotation[4] = yaxis[0];
-//     rotation[5] = yaxis[1];
-//     rotation[6] = yaxis[2];
-//
-//     rotation[8] = zaxis[0];
-//     rotation[9] = zaxis[1];
-//     rotation[10] = zaxis[2];
-//
-//     // Create translation matrix
-//     const translation = mat4.create();
-//     mat4.translate(translation, translation, vec3.negate(vec3.create(), position));
-//
-//     // Combine rotation and translation
-//     const view = mat4.create();
-//     mat4.multiply(view, rotation, translation);
-//
-//     return view;
-// }
+    x = a0 * p0[0] + a1 * p1[0] + a2 * p2[0] + a3 * p3[0];
+    y = a0 * p0[1] + a1 * p1[1] + a2 * p2[1] + a3 * p3[1];
+    z = a0 * p0[2] + a1 * p1[2] + a2 * p2[2] + a3 * p3[2];
+
+    return new Float32Array([x, y, z]);
+}
+
+function smoothStep(t) {
+    if (t > 1) {
+        return 1;
+    } else if (t < 0) {
+        return 0;
+    } else {
+        return -2 * (t ** 3) + 3 * (t ** 2);
+    }
+}
 
 // https://glmatrix.net/docs/mat4.js.html#line1740
 function lookAt(eye, center, up) {
@@ -53,10 +43,12 @@ function lookAt(eye, center, up) {
     let centerx = center[0];
     let centery = center[1];
     let centerz = center[2];
+
+    const EPSILON = 0.000001;
     if (
-        Math.abs(eyex - centerx) < glMatrix.EPSILON &&
-        Math.abs(eyey - centery) < glMatrix.EPSILON &&
-        Math.abs(eyez - centerz) < glMatrix.EPSILON
+        Math.abs(eyex - centerx) < EPSILON &&
+        Math.abs(eyey - centery) < EPSILON &&
+        Math.abs(eyez - centerz) < EPSILON
     ) {
         return identity(out);
     }

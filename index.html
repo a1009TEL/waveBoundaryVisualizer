@@ -1,16 +1,127 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WebGL 3D Grid (Ortho)</title>
-  <link rel="stylesheet" href="./style.css" />
-</head>
-<body>
-  <canvas id="glcanvas"></canvas>
-  <script src="https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/gl-matrix-min.js"></script>
-  <script src="./utils.js"></script>
-  <script src="./shader_program.js"></script>
-  <script src="script.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebGL 3D Grid (Ortho)</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="control_panel">
+      <span>scene</span>
+      <label>
+        camera position
+        <input
+          type="range"
+          min="0.001"
+          max="1"
+          value="1"
+          step="0.001"
+          id="camera_pos"
+        />
+        <span>number</span>
+      </label>
+      <span>visuals</span>
+      <label>
+        T Wave Alpha
+        <input
+          type="range"
+          min="0"
+          max="1"
+          value="1"
+          step="0.01"
+          id="transmited_wave_alpha"
+      /></label>
+      <label>
+        Amplitude Scaling
+        <input
+          type="range"
+          min="0"
+          max="2"
+          value="1"
+          step="0.01"
+          id="amplitude_scaling"
+      /></label>
+      <label>
+        Time Zoom
+        <input
+          type="range"
+          min="1"
+          max="1000000"
+          value="800000"
+          step="0.01"
+          id="time_zoom"
+      /></label>
+      <label
+        >Space Zoom<input
+          type="range"
+          min="1"
+          max="1000"
+          value="100"
+          step="0.01"
+          id="space_zoom"
+      /></label>
+      <label
+        >Time<input
+          type="range"
+          min="0"
+          max="100"
+          value="50"
+          step="0.01"
+          id="time"
+      /></label>
+      <span>parameters</span>
+      <label
+        >Omega(freq)<input
+          type="range"
+          min="0"
+          max="10000"
+          value="5000"
+          step="0.01"
+          id="omega"
+      /></label>
+      <label
+        >Beta<input
+          type="range"
+          min="0"
+          max="10000"
+          value="5000"
+          step="0.01"
+          id="beta"
+      /></label>
+      <label
+        >Theta<input
+          type="range"
+          min="0"
+          max="3.1425"
+          value="0.8"
+          step="0.0001"
+          id="theta"
+      /></label>
+      <label
+        >Eta medium 1<input
+          type="range"
+          min="0"
+          max="376.9"
+          value="376.9"
+          step="0.1"
+          id="eta1"
+      /></label>
+      <label
+        >Eta medium 2<input
+          type="range"
+          min="0"
+          max="376.9"
+          value="235.0"
+          step="0.1"
+          id="eta2"
+      /></label>
+    </div>
+    <canvas id="glcanvas"></canvas>
+    <!-- <script src="./imgui-js/imgui.js" type="module"></script> -->
+    <script src="./ui_elements.js"></script>
+    <script src="./utils.js"></script>
+    <script src="./shader_program.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>
