@@ -191,7 +191,7 @@ if (gl != null) {
             const uEta1 = gl.getUniformLocation(program, "uEta1")
             const uEta2 = gl.getUniformLocation(program, "uEta2");
 
-            let screen_divider = 1.0;
+            let screen_divider = 0.8;
             let width_aspect = canvas.width / Math.max(canvas.width, canvas.height) / screen_divider;
             let height_aspect = canvas.height / Math.max(canvas.width, canvas.height) / screen_divider;
             let r = width_aspect / 2;

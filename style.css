@@ -1,12 +1,21 @@
+* {
+  font-family: "Noto Sans", sans-serif; /* Your font’s name */
+  margin: 0;
+  padding: 0;
+  color: white;
+}
+
 body {
+  font-size: small;
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #222;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
 }
 
 canvas {
-  margin: 0;
   display: block;
   width: 100vw;
   height: 100vh;
@@ -16,14 +25,25 @@ canvas {
   position: absolute;
   display: flex; /* Enable Flexbox layout */
   flex-direction: column; /* Stack items vertically */
-  gap: 2px; /* Space between each slider */
+  gap: 0.5rem; /* Space between each slider */
   padding: 20px; /* Padding around the container */
-  width: auto; /* Set container width */
-  background-color: rgba(255,255,255,10); /* Light background color */
-  border-radius: 4px; /* Rounded corners for the container */
-  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */ */
+  width: 340px; /* Set container width */
+  border-radius: 0 0 10px 0;
+  background-color: rgba(255, 255, 255, 0.05); /* Light background color */
+  flex-shrink: 0;
 }
 
 #control_panel > span {
-    font-size: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+#control_panel > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#control_panel > div > .slider_label {
+  width: 100px;
 }
