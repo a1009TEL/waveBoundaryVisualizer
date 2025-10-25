@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WebGL 3D Grid (Ortho)</title>
+    <title>Oblique Incidence</title>
     <link rel="stylesheet" href="./style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -55,7 +55,7 @@
         <input
           type="range"
           min="0"
-          max="2"
+          max="5"
           value="1"
           step="0.01"
           id="amplitude_scaling"
@@ -121,14 +121,14 @@
         />
       </div>
       <div>
-        <span class="slider_label">Theta</span
+        <span class="slider_label">Theta(deg)</span
         ><span id="slider_text_theta">--</span
         ><input
           type="range"
           min="0"
-          max="3.1425"
-          value="0.8"
-          step="0.0001"
+          max="90"
+          value="30"
+          step="0.01"
           id="theta"
           onchange="slider(this.value, 'slider_text_theta')"
           onmousemove="slider(this.value, 'slider_text_theta')"
@@ -164,15 +164,11 @@
       </div>
     </div>
     <canvas id="glcanvas"></canvas>
-    <!-- <script src="./imgui-js/imgui.js" type="module"></script> -->
     <script type="text/javascript">
       function slider(value, target_id) {
         document.getElementById(target_id).innerHTML = value;
       }
     </script>
-    <script src="./ui_elements.js"></script>
-    <script src="./utils.js"></script>
-    <script src="./shader_program.js"></script>
-    <script src="script.js"></script>
+    <script type="module" src="./dist/script.js" defer></script>
   </body>
 </html>

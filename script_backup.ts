@@ -15,7 +15,7 @@ if (gl != null) {
 
 
 // === Setup Shaders ===
-const vsSource = `#version 300 es
+let vsSource = `#version 300 es
     layout (location = 0) in vec3 aPosition;
     layout (location = 1) in vec2 aUV;
     layout (location = 2) in vec4 aColor;
@@ -39,26 +39,50 @@ const vsSource = `#version 300 es
     out vec4 vColor;
 
     void main() {
-        float time_scaling = uOmega / uTimeZoom;
-        float space_scaling = uBeta / uSpaceZoom;
-
         float eta1 = uEta1;
         float eta2 = uEta2;
-        float incident_angle = uTheta;
+        float incident_angle = uTheta / 180.0 * 3.141592653589793;
+
+        float time_scaling = uOmega / uTimeZoom;
+        float space_scaling_beta1= uBeta / uSpaceZoom;
+        float space_scaling_beta2 = uBeta * eta1 / eta2 / uSpaceZoom;
 
         float transmited_angle = asin(sin(incident_angle) * eta2/eta1);
 
         float incident_axis = dot(vec3(sin(incident_angle), 0.0, cos(incident_angle)), aPosition);
         float reflected_axis = dot(vec3(sin(incident_angle), 0.0, -cos(incident_angle)), aPosition);
-        float transmited_axis = dot(vec3(sin(transmited_angle), 0.0, cos(transmited_angle)), aPosition) / (eta2 / eta1);
+        float transmited_axis = dot(vec3(sin(transmited_angle), 0.0, cos(transmited_angle)), aPosition);
 
-        float incident_amplitude = 2.0/space_scaling;
-        float reflected_amplitude = (eta2*cos(incident_angle)-eta1*cos(transmited_angle))/(eta2*cos(incident_angle)+eta1*cos(transmited_angle)) * incident_amplitude;
-        float transmited_amplitude = (2.0*eta2*cos(incident_angle))/(eta2*cos(incident_angle)+eta1*cos(transmited_angle)) * incident_amplitude;
+        float incident_amplitude = 1.0/space_scaling_beta1;
+        float reflected_amplitude;
+        float transmited_amplitude;
 
-        float incident = sin(incident_axis*space_scaling-uTime*time_scaling)*incident_amplitude;
-        float reflected = sin(reflected_axis*space_scaling-uTime*time_scaling)*reflected_amplitude;
-        float transmited = sin(transmited_axis*space_scaling-uTime*time_scaling)*transmited_amplitude;
+        if (true){ // TE
+            reflected_amplitude = (eta2*cos(incident_angle)-eta1*cos(transmited_angle))/(eta2*cos(incident_angle)+eta1*cos(transmited_angle)) * incident_amplitude;
+            transmited_amplitude = (2.0*eta2*cos(incident_angle))/(eta2*cos(incident_angle)+eta1*cos(transmited_angle)) * incident_amplitude;
+        }else{ //TM
+            reflected_amplitude = (eta1*cos(incident_angle)-eta2*cos(transmited_angle))/(eta1*cos(incident_angle)+eta2*cos(transmited_angle)) * incident_amplitude;
+            transmited_amplitude = (2.0*eta1*cos(incident_angle))/(eta1*cos(incident_angle)+eta2*cos(transmited_angle)) * incident_amplitude;
+        }
+
+        float incident = sin(incident_axis*space_scaling_beta1-uTime*time_scaling)*incident_amplitude;
+        float reflected = sin(reflected_axis*space_scaling_beta1-uTime*time_scaling)*reflected_amplitude;
+
+        float transmited_;
+        float crit_angle = asin(eta1/eta2);
+
+        float alpha_2 = space_scaling_beta2 * sqrt(eta2 / eta1 * sin(incident_angle) * sin(incident_angle) - 1.0);
+        float beta_2x = space_scaling_beta2 * sqrt(eta2 / eta1) * sin(incident_angle);
+        // float alpha_2 = 1.0;
+        // float beta_2x = 1.0;
+
+        if (crit_angle < incident_angle && eta1 < eta2){
+            transmited_ = exp(-alpha_2 * aPosition.z) * sin(beta_2x * aPosition.x)/100.0;
+        } else {
+            transmited_ = sin(transmited_axis*space_scaling_beta2-uTime*time_scaling);
+        }
+
+        float transmited = transmited_*transmited_amplitude;
 
         float pos_y = mix(incident + reflected, transmited, aPosition.z > 0.0);
 
@@ -73,6 +97,8 @@ const vsSource = `#version 300 es
         // vColor = vec4(aPosition,1.0);
         // vColor = vec4(aUV, 0,0.0);
     }
+
+
     `;
 
 const fsSource = `#version 300 es
@@ -87,6 +113,8 @@ const fsSource = `#version 300 es
         // outColor = vec4(1.0,1.0,1.0,0.1);
     }
     `;
+
+// vsource = require('fs').readFileSync('./shaders/vertex_wave.glsl', 'utf8');
 
 if (gl != null) {
     const vertexShader = createShader(gl.VERTEX_SHADER, vsSource);
@@ -238,7 +266,7 @@ if (gl != null) {
             gl.uniform1f(uTime, time);
             gl.uniform1f(uTWaveAlpha, control_panel_items.transmited_wave_alpha?.valueAsNumber ?? 0.5);
             gl.uniform1f(uAmplitudeScaling, control_panel_items.amplitude_scaling?.valueAsNumber ?? 1.0);
-            gl.uniform1f(uTimeZoom, control_panel_items.time_zoom?.valueAsNumber ?? 800000.);
+            gl.uniform1f(uTimeZoom, control_panel_items.time_zoom?.valueAsNumber ?? 800000.0);
             gl.uniform1f(uSpaceZoom, control_panel_items.space_zoom?.valueAsNumber ?? 100.0);
             gl.uniform1f(uOmega, control_panel_items.omega?.valueAsNumber ?? 5000.0);
             gl.uniform1f(uBeta, control_panel_items.beta?.valueAsNumber ?? 5000.0);

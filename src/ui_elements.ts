@@ -15,23 +15,7 @@ interface ControlPanel {
     eta2: HTMLInputElement | null,
 }
 
-function controlPanelDebug(control_panel: ControlPanel) {
-    console.log(control_panel.camera_pos?.valueAsNumber);
-
-    console.log(control_panel.transmited_wave_alpha?.valueAsNumber);
-    console.log(control_panel.time_zoom?.valueAsNumber);
-    console.log(control_panel.space_zoom?.valueAsNumber);
-
-    console.log(control_panel.time?.valueAsNumber);
-
-    console.log(control_panel.omega?.valueAsNumber);
-    console.log(control_panel.beta?.valueAsNumber);
-    console.log(control_panel.theta?.valueAsNumber);
-    console.log(control_panel.eta1?.valueAsNumber);
-    console.log(control_panel.eta2?.valueAsNumber);
-}
-
-const control_panel_items: ControlPanel = {
+export const control_panel_items: ControlPanel = {
     camera_pos: document.getElementById("camera_pos") as HTMLInputElement,
 
     transmited_wave_alpha: document.getElementById("transmited_wave_alpha") as HTMLInputElement,
