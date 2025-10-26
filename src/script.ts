@@ -75,22 +75,21 @@ if (gl != null) {
     //----------------------------------------------------------------------
 
     gl.clearColor(.1, .1, .1, 1); //gray
-    // gl.clearColor(1, 0, 1, 1); //magneta
+    let screen_divider = 0.8;
+    let width_aspect = canvas.width / Math.max(canvas.width, canvas.height) / screen_divider;
+    let height_aspect = canvas.height / Math.max(canvas.width, canvas.height) / screen_divider;
+
+    const p0 = Types.float3(0.0, 1.0, 0.0);
+    const p1 = Types.float3(-0.75, 0.85, 0.25);
+    const p2 = Types.float3(-0.85, 0.81, 0.5);
+    const p3 = Types.float3(-1.0, 0.8, 0.75);
+
     function update(time: number) {
         if (gl != null) {
-
-            let screen_divider = 0.8;
-            let width_aspect = canvas.width / Math.max(canvas.width, canvas.height) / screen_divider;
-            let height_aspect = canvas.height / Math.max(canvas.width, canvas.height) / screen_divider;
 
             const projection = Utils.ortho(width_aspect, height_aspect, 0.01, 100.0);
 
             // bezier position
-            const p0 = Types.float3(0.0, 1.0, 0.0);
-            const p1 = Types.float3(-0.75, 0.85, 0.25);
-            const p2 = Types.float3(-0.85, 0.81, 0.5);
-            const p3 = Types.float3(-1.0, 0.8, 0.75);
-
             const camera_lerp = control_panel_items.camera_pos?.valueAsNumber ?? 1.0;
 
             const position = Utils.bezier3(p0, p1, p2, p3, camera_lerp);   // camera position
@@ -112,7 +111,7 @@ if (gl != null) {
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
-                0, 0.2, 0, 1,
+                0, 0, 0, 1,
             ]));
 
             shader_plane.setUniformMatrix4fv("uProjection", projection);
