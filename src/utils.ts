@@ -1,5 +1,27 @@
 import * as Types from "./types.js";
 
+export function getColorMapIndex(name: string): number {
+    const map: Record<string, number> = {
+        PiYG: 0,
+        PRGn: 1,
+        BrBG: 2,
+        PuOr: 3,
+        RdGy: 4,
+        RdBu: 5,
+        RdTlBu: 6,
+        RdTlGn: 7,
+        Spectral: 8,
+        coolwarm: 9,
+        bwr: 10,
+        seismic: 11,
+        berlin: 12,
+        managua: 13,
+        vanimo: 14
+    };
+
+    return map[name] ?? 5; //default
+}
+
 export function bezier3(p0: Types.Float3, p1: Types.Float3, p2: Types.Float3, p3: Types.Float3, t: number): Types.Float3 {
     const a0 = ((1 - t) ** 3);
     const a1 = 3 * ((1 - t) ** 2) * t;

@@ -1,4 +1,5 @@
 import { gl } from "./canvas.js";
+import { initTexture } from "./images.js";
 export class Mesh {
     constructor(vertices, indices) {
         this.vertices = vertices;
@@ -9,7 +10,16 @@ export class Mesh {
         this.uv_buffer = gl?.createBuffer() ?? null;
         this.color_buffer = gl?.createBuffer() ?? null;
         this.ebo = gl?.createBuffer() ?? null;
+        this.textures = [];
         this.setupMesh();
+    }
+    loadImages(image_path) {
+        const image = new Image();
+        image.onload = () => {
+            const texture = initTexture(image) ?? 0.0;
+            this.textures.push(texture);
+        };
+        image.src = image_path;
     }
     draw(shader) {
         if (shader.ready()) {
@@ -17,6 +27,9 @@ export class Mesh {
             gl?.bindVertexArray(this.vao);
             gl?.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_INT, 0);
         }
+    }
+    getTexture(n) {
+        return this.textures[n];
     }
     setupMesh() {
         // Position

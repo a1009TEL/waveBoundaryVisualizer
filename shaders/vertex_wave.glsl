@@ -10,6 +10,8 @@ uniform mat4 uProjection;
 
 uniform float uTime;
 
+uniform bool uTM;
+
 uniform float uTWaveAlpha;
 uniform float uAmplitudeScaling;
 uniform float uTimeZoom;
@@ -71,7 +73,7 @@ void main() {
     float reflected_axis = dot(vec3(sin(incident_angle), 0.0, -cos(incident_angle)), aPosition) / uSpaceZoom;
 
     float incident, reflected, transmited;
-    float incident_amplitude = 1.0 / uSpaceZoom;
+    float incident_amplitude = uSpaceZoom / 1000.0;
 
     float crit_angle = 1000.0;
 
@@ -82,24 +84,30 @@ void main() {
         float transmited_angle = asin(sin(incident_angle) * eta2/eta1);
         float transmited_axis = dot(vec3(sin(transmited_angle), 0.0, cos(transmited_angle)), aPosition) / uSpaceZoom;
 
-        float reflected_amplitude = reflectedOblique(eta1, eta2, incident_angle, transmited_angle, false) * incident_amplitude;
-        float transmited_amplitude = transmitedOblique(eta1, eta2, incident_angle, transmited_angle, false) * incident_amplitude;
+        float reflected_amplitude = reflectedOblique(eta1, eta2, incident_angle, transmited_angle, uTM) * incident_amplitude;
+        float transmited_amplitude = transmitedOblique(eta1, eta2, incident_angle, transmited_angle, uTM) * incident_amplitude;
 
         incident = sin(incident_axis*beta1-time*omega)*incident_amplitude;
         reflected = sin(reflected_axis*beta1-time*omega)*reflected_amplitude;
         transmited = sin(transmited_axis*beta2-time*omega)*transmited_amplitude;
     } else {
-        float a = sqrt((eta2*eta2)/(eta1*eta1) * sin(incident_angle) * sin(incident_angle) - 1.0);
-        float d = eta2*eta2*cos(incident_angle)*cos(incident_angle) + a*a;
-
-        float reflected_amplitude = ((eta2*eta2)*cos(incident_angle)*cos(incident_angle) - a*a) / d;
-        float reflected_phase_shift = (2.0 * eta1*eta2*a*cos(incident_angle)) / d / uSpaceZoom; // phase also affected by zoom
-
-        incident = sin(incident_axis*beta1-time*omega) * incident_amplitude;
-        reflected = sin(reflected_axis*beta1-time*omega - reflected_phase_shift) * reflected_amplitude * incident_amplitude;
-
         float alpha_2 = beta2 * sqrt((eta2*eta2) / (eta1*eta1) * sin(incident_angle) * sin(incident_angle) - 1.0);
         float beta_2x = beta2 * eta2 / eta1 * sin(incident_angle);
+
+        float a = sqrt((eta2*eta2)/(eta1*eta1) * sin(incident_angle) * sin(incident_angle) - 1.0);
+
+        if(uTM){
+            float temp_eta = eta2;
+            eta2 = eta1;
+            eta1 = temp_eta;
+        }
+
+        float d = eta2*eta2 * cos(incident_angle)*cos(incident_angle) + a*a;
+        float reflected_phase_shift = (2.0 * eta1*eta2*a*cos(incident_angle)) / d / uSpaceZoom; // phase also affected by zoom
+        float reflected_amplitude = ((eta2*eta2) * cos(incident_angle)*cos(incident_angle) - a*a) / d * incident_amplitude;
+
+        incident = sin(incident_axis*beta1 - time*omega) * incident_amplitude;
+        reflected = sin(reflected_axis*beta1 - time*omega - reflected_phase_shift) * reflected_amplitude;
 
         transmited = exp(-alpha_2 * aPosition.z / uSpaceZoom) * 2.0 * sin(beta_2x * aPosition.x / uSpaceZoom - time*omega) * incident_amplitude;
     }
@@ -107,14 +115,6 @@ void main() {
 
     float pos_y = mix(incident + reflected, transmited, aPosition.z > 0.0);
 
-    vec3 red_white = mix(vec3(1.0,1.0,1.0), vec3(1.0,0.0,0.0), pos_y/incident_amplitude);
-    vec3 white_blue = mix(vec3(1.0,1.0,1.0), vec3(0.0,0.0,1.0), -pos_y/incident_amplitude);
-    vec3 color_map = mix(red_white, white_blue, step(pos_y, 0.0));
-    vec4 color_map_alpha = mix(vec4(color_map, uTWaveAlpha), vec4(color_map, 1.0), step(aPosition.z, 0.0));
-
-
-    vColor = color_map_alpha;
+    vColor = vec4((pos_y/incident_amplitude), 0.0, 0.0, 1.0);
     gl_Position = uProjection * uView * uModel * vec4(aPosition.x, pos_y * uAmplitudeScaling, aPosition.z, 1.0);
-    // vColor = vec4(aPosition,1.0);
-    // vColor = vec4(aUV, 0,0.0);
 }

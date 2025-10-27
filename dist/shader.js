@@ -82,6 +82,26 @@ export class Shader {
             gl?.linkProgram(this.program);
         }
     }
+    setUniform1b(uniform_name, value) {
+        if (this.program) {
+            this.use();
+            const uniform = gl?.getUniformLocation(this.program, uniform_name);
+            if (uniform != null) {
+                gl?.uniform1i(uniform, value ? 1 : 0);
+            }
+        }
+        gl?.useProgram(null);
+    }
+    setUniform1i(uniform_name, value) {
+        if (this.program) {
+            this.use();
+            const uniform = gl?.getUniformLocation(this.program, uniform_name);
+            if (uniform != null) {
+                gl?.uniform1i(uniform, value);
+            }
+        }
+        gl?.useProgram(null);
+    }
     setUniform1f(uniform_name, value) {
         if (this.program) {
             this.use();

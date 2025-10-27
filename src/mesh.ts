@@ -1,10 +1,13 @@
 import { Vertices } from "./vertex.js";
 import { Shader } from "./shader.js";
 import { gl } from "./canvas.js";
+import { initTexture } from "./images.js";
 
 export class Mesh {
     public vertices: Vertices;
     public indices: Uint32Array;
+
+    private textures: WebGLTexture[];
 
     private vao: WebGLVertexArrayObject | null;
     private position_buffer: WebGLBuffer | null;
@@ -24,7 +27,19 @@ export class Mesh {
         this.color_buffer = gl?.createBuffer() ?? null;
         this.ebo = gl?.createBuffer() ?? null;
 
+        this.textures = [];
+
         this.setupMesh();
+    }
+
+    public loadImages(image_path: string) {
+        const image = new Image();
+        image.onload = () => {
+            const texture = initTexture(image) ?? 0.0;
+
+            this.textures.push(texture);
+        }
+        image.src = image_path;
     }
 
     public draw(shader: Shader) {
@@ -34,6 +49,10 @@ export class Mesh {
             gl?.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_INT, 0);
         }
 
+    }
+
+    public getTexture(n: number) {
+        return this.textures[n];
     }
 
     private setupMesh() {

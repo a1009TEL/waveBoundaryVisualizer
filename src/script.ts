@@ -7,8 +7,8 @@ import { canvas, gl } from "./canvas.js";
 import { control_panel_items } from "./ui_elements.js";
 
 
-const shader_plane: Shader = new Shader("./shaders/vertex_wave.glsl", "./shaders/fragment_wave.glsl");
-const shader_ui: Shader = new Shader("./shaders/vertex_ui.glsl", "./shaders/fragment_ui.glsl");
+const wave_shader: Shader = new Shader("./shaders/vertex_wave.glsl", "./shaders/fragment_wave.glsl");
+const ui_shader: Shader = new Shader("./shaders/vertex_ui.glsl", "./shaders/fragment_ui.glsl");
 
 if (gl != null) {
     const positions: Types.Position[] = [];
@@ -84,6 +84,12 @@ if (gl != null) {
     const p2 = Types.float3(-0.85, 0.81, 0.5);
     const p3 = Types.float3(-1.0, 0.8, 0.75);
 
+    wave_mesh.loadImages("./assets/matplotlib_colormaps.png");
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, wave_mesh.getTexture(0));
+    wave_shader.setUniform1i("uColorMap", 0);
+
+
     function update(time: number) {
         if (gl != null) {
 
@@ -95,7 +101,8 @@ if (gl != null) {
             const position = Utils.bezier3(p0, p1, p2, p3, camera_lerp);   // camera position
 
             const target = Types.float3(0, 0, 0);     // looking at origin
-            const up = Types.float3(1 - Utils.smoothStep(camera_lerp * 3), 1, 0); // World up
+            const last_camera_lerp = 1 - Utils.smoothStep(camera_lerp * 3);
+            const up = Types.float3(last_camera_lerp, 1, 0); // World up
 
             const view = Utils.lookAt(position, target, up);
             const model = new Float32Array([
@@ -105,29 +112,52 @@ if (gl != null) {
                 0, 0, 0, 1,
             ]);
 
-            shader_ui.setUniformMatrix4fv("uProjection", projection);
-            shader_ui.setUniformMatrix4fv("uView", view);
-            shader_ui.setUniformMatrix4fv("uModel", new Float32Array([
+            ui_shader.setUniformMatrix4fv("uProjection", projection);
+            ui_shader.setUniformMatrix4fv("uView", view);
+            ui_shader.setUniformMatrix4fv("uModel", new Float32Array([
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
-                0, 0, 0, 1,
+                0, 0.1, 0, 1,
             ]));
 
-            shader_plane.setUniformMatrix4fv("uProjection", projection);
-            shader_plane.setUniformMatrix4fv("uView", view);
-            shader_plane.setUniformMatrix4fv("uModel", model);
+            ui_shader.setUniform1f("uTheta", control_panel_items.theta?.valueAsNumber ?? 1.5);
+            ui_shader.setUniform1f("uEta1", control_panel_items.eta1?.valueAsNumber ?? 376.9);
+            ui_shader.setUniform1f("uEta2", control_panel_items.eta2?.valueAsNumber ?? 188.5);
+            ui_shader.setUniform1f("uUIAlpha", last_camera_lerp);
 
-            shader_plane.setUniform1f("uTime", time);
-            shader_plane.setUniform1f("uTWaveAlpha", control_panel_items.transmited_wave_alpha?.valueAsNumber ?? 0.5);
-            shader_plane.setUniform1f("uAmplitudeScaling", control_panel_items.amplitude_scaling?.valueAsNumber ?? 1.0);
-            shader_plane.setUniform1f("uTimeZoom", control_panel_items.time_zoom?.valueAsNumber ?? 800000.0);
-            shader_plane.setUniform1f("uSpaceZoom", control_panel_items.space_zoom?.valueAsNumber ?? 100.0);
-            shader_plane.setUniform1f("uOmega", control_panel_items.omega?.valueAsNumber ?? 5000.0);
-            shader_plane.setUniform1f("uBeta", control_panel_items.beta?.valueAsNumber ?? 5000.0);
-            shader_plane.setUniform1f("uTheta", control_panel_items.theta?.valueAsNumber ?? 1.5);
-            shader_plane.setUniform1f("uEta1", control_panel_items.eta1?.valueAsNumber ?? 376.9);
-            shader_plane.setUniform1f("uEta2", control_panel_items.eta2?.valueAsNumber ?? 188.5);
+            wave_shader.setUniformMatrix4fv("uProjection", projection);
+            wave_shader.setUniformMatrix4fv("uView", view);
+            wave_shader.setUniformMatrix4fv("uModel", model);
+
+            wave_shader.setUniform1f("uTime", time);
+
+            let tm: boolean;
+            switch (control_panel_items.te_tm?.value) {
+                case "TM":
+                    tm = true;
+                    break;
+                default:
+                    tm = false;
+                    break;
+            }
+
+            wave_shader.setUniform1b("uTM", tm);
+
+            const colormap_index = Utils.getColorMapIndex(control_panel_items.colormap?.value ?? "");
+            wave_shader.setUniform1i("uColorMapIndex", colormap_index);
+
+            wave_shader.setUniform1f("uTWaveAlpha", control_panel_items.transmited_wave_alpha?.valueAsNumber ?? 0.5);
+            wave_shader.setUniform1f("uAmplitudeScaling", control_panel_items.amplitude_scaling?.valueAsNumber ?? 1.0);
+            wave_shader.setUniform1f("uTimeZoom", control_panel_items.time_zoom?.valueAsNumber ?? 800000.0);
+            wave_shader.setUniform1f("uSpaceZoom", control_panel_items.space_zoom?.valueAsNumber ?? 100.0);
+            wave_shader.setUniform1f("uOmega", control_panel_items.omega?.valueAsNumber ?? 5000.0);
+            wave_shader.setUniform1f("uBeta", control_panel_items.beta?.valueAsNumber ?? 5000.0);
+            wave_shader.setUniform1f("uTheta", control_panel_items.theta?.valueAsNumber ?? 1.5);
+            wave_shader.setUniform1f("uEta1", control_panel_items.eta1?.valueAsNumber ?? 376.9);
+            wave_shader.setUniform1f("uEta2", control_panel_items.eta2?.valueAsNumber ?? 188.5);
+
+            gl.bindTexture(gl.TEXTURE_2D, wave_mesh.getTexture(0));
         }
     }
 
@@ -135,8 +165,8 @@ if (gl != null) {
         if (gl != null) {
             gl.clear(gl.COLOR_BUFFER_BIT);
             //draw
-            ui_mesh.draw(shader_ui);
-            wave_mesh.draw(shader_plane);
+            wave_mesh.draw(wave_shader);
+            ui_mesh.draw(ui_shader);
         }
     }
 

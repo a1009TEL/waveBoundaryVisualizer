@@ -2,7 +2,6 @@
   font-family: "Noto Sans", sans-serif; /* Your font’s name */
   margin: 0;
   padding: 0;
-  color: white;
 }
 
 body {
@@ -22,6 +21,7 @@ canvas {
 }
 
 #control_panel {
+  color: white;
   position: absolute;
   display: flex; /* Enable Flexbox layout */
   flex-direction: column; /* Stack items vertically */

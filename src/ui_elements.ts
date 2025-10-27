@@ -1,12 +1,13 @@
 interface ControlPanel {
+    te_tm: HTMLInputElement | null,
+
     camera_pos: HTMLInputElement | null,
 
+    colormap: HTMLInputElement | null,
     transmited_wave_alpha: HTMLInputElement | null,
     amplitude_scaling: HTMLInputElement | null,
     time_zoom: HTMLInputElement | null,
     space_zoom: HTMLInputElement | null,
-
-    time: HTMLInputElement | null,
 
     omega: HTMLInputElement | null,
     beta: HTMLInputElement | null,
@@ -16,14 +17,15 @@ interface ControlPanel {
 }
 
 export const control_panel_items: ControlPanel = {
+    te_tm: document.getElementById("selector_te_tm") as HTMLInputElement,
+
     camera_pos: document.getElementById("camera_pos") as HTMLInputElement,
 
+    colormap: document.getElementById("selector_colormap") as HTMLInputElement,
     transmited_wave_alpha: document.getElementById("transmited_wave_alpha") as HTMLInputElement,
     amplitude_scaling: document.getElementById("amplitude_scaling") as HTMLInputElement,
     time_zoom: document.getElementById("time_zoom") as HTMLInputElement,
     space_zoom: document.getElementById("space_zoom") as HTMLInputElement,
-
-    time: document.getElementById("time") as HTMLInputElement,
 
     omega: document.getElementById("omega") as HTMLInputElement,
     beta: document.getElementById("beta") as HTMLInputElement,
