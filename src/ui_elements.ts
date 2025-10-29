@@ -2,6 +2,7 @@ interface ControlPanel {
     te_tm: HTMLInputElement | null,
 
     camera_pos: HTMLInputElement | null,
+    ui_alpha: HTMLInputElement | null,
 
     colormap: HTMLInputElement | null,
     transmited_wave_alpha: HTMLInputElement | null,
@@ -20,6 +21,7 @@ export const control_panel_items: ControlPanel = {
     te_tm: document.getElementById("selector_te_tm") as HTMLInputElement,
 
     camera_pos: document.getElementById("camera_pos") as HTMLInputElement,
+    ui_alpha: document.getElementById("ui_alpha") as HTMLInputElement,
 
     colormap: document.getElementById("selector_colormap") as HTMLInputElement,
     transmited_wave_alpha: document.getElementById("transmited_wave_alpha") as HTMLInputElement,

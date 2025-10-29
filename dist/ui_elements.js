@@ -1,6 +1,7 @@
 export const control_panel_items = {
     te_tm: document.getElementById("selector_te_tm"),
     camera_pos: document.getElementById("camera_pos"),
+    ui_alpha: document.getElementById("ui_alpha"),
     colormap: document.getElementById("selector_colormap"),
     transmited_wave_alpha: document.getElementById("transmited_wave_alpha"),
     amplitude_scaling: document.getElementById("amplitude_scaling"),

@@ -16,8 +16,8 @@
     <div id="control_panel">
       <span>General</span>
       <select id="selector_te_tm">
-        <option value="TE">Traverse Electric</option>
-        <option value="TM">Traverse Magnetic</option>
+        <option value="TE">Traverse Electric (Visualizing E Field)</option>
+        <option value="TM">Traverse Magnetic (Visualizing M Field)</option>
       </select>
       <span>Scene</span>
       <div>
@@ -35,24 +35,41 @@
           onload="slider(this.value, 'slider_text_camera_pos')"
         />
       </div>
+      <div>
+        <span class="slider_label">UI Alpha</span>
+        <span class="slider_text_value" id="slider_text_ui_alpha">--</span>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          value="1"
+          step="0.01"
+          id="ui_alpha"
+          onchange="slider(this.value, 'slider_text_ui_alpha')"
+          onmousemove="slider(this.value, 'slider_text_ui_alpha')"
+        />
+      </div>
       <span>Visuals</span>
-      <select id="selector_colormap">
-        <option value="PiYG">PiYG</option>
-        <option value="PRGn">PRGn</option>
-        <option value="BrBG">BrBG</option>
-        <option value="PuOr">PuOr</option>
-        <option value="RdGy">RdGy</option>
-        <option value="RdBu" selected>RdBu</option>
-        <option value="RdTlBu">RdTlBu</option>
-        <option value="RdTlGn">RdTlGn</option>
-        <option value="Spectral">Spectral</option>
-        <option value="coolwarm">coolwarm</option>
-        <option value="bwr">bwr</option>
-        <option value="seismic">seismic</option>
-        <option value="berlin">berlin</option>
-        <option value="managua">managua</option>
-        <option value="vanimo">vanimo</option>
-      </select>
+      <div>
+        <span>Colormap</span>
+        <select id="selector_colormap">
+          <option value="PiYG">PiYG</option>
+          <option value="PRGn">PRGn</option>
+          <option value="BrBG">BrBG</option>
+          <option value="PuOr">PuOr</option>
+          <option value="RdGy">RdGy</option>
+          <option value="RdBu">RdBu</option>
+          <option value="RdTlBu">RdTlBu</option>
+          <option value="RdTlGn">RdTlGn</option>
+          <option value="Spectral">Spectral</option>
+          <option value="coolwarm">coolwarm</option>
+          <option value="bwr">bwr</option>
+          <option value="seismic">seismic</option>
+          <option value="berlin">berlin</option>
+          <option value="managua" selected>managua</option>
+          <option value="vanimo">vanimo</option>
+        </select>
+      </div>
       <div>
         <span class="slider_label">T Wave Alpha</span>
         <span class="slider_text_value" id="slider_text_transmited_wave_alpha"
@@ -144,7 +161,7 @@
       </div>
       <div>
         <span class="slider_label">Theta(deg)</span
-        ><span id="slider_text_theta">--</span
+        ><span class="slider_text_value" id="slider_text_theta">--</span
         ><input
           type="range"
           min="0"

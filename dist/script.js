@@ -70,10 +70,15 @@ if (gl != null) {
     const p1 = Types.float3(-0.75, 0.85, 0.25);
     const p2 = Types.float3(-0.85, 0.81, 0.5);
     const p3 = Types.float3(-1.0, 0.8, 0.75);
+    //Images
     wave_mesh.loadImages("./assets/matplotlib_colormaps.png");
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, wave_mesh.getTexture(0));
     wave_shader.setUniform1i("uColorMap", 0);
+    ui_mesh.loadImages("./assets/medium_text.png");
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, ui_mesh.getTexture(0));
+    wave_shader.setUniform1i("uText", 0);
     function update(time) {
         if (gl != null) {
             const projection = Utils.ortho(width_aspect, height_aspect, 0.01, 100.0);
@@ -101,7 +106,8 @@ if (gl != null) {
             ui_shader.setUniform1f("uTheta", control_panel_items.theta?.valueAsNumber ?? 1.5);
             ui_shader.setUniform1f("uEta1", control_panel_items.eta1?.valueAsNumber ?? 376.9);
             ui_shader.setUniform1f("uEta2", control_panel_items.eta2?.valueAsNumber ?? 188.5);
-            ui_shader.setUniform1f("uUIAlpha", last_camera_lerp);
+            // ui_shader.setUniform1f("uUIAlpha", last_camera_lerp);
+            ui_shader.setUniform1f("uUIAlpha", control_panel_items.ui_alpha?.valueAsNumber ?? 1.0);
             wave_shader.setUniformMatrix4fv("uProjection", projection);
             wave_shader.setUniformMatrix4fv("uView", view);
             wave_shader.setUniformMatrix4fv("uModel", model);
@@ -127,14 +133,15 @@ if (gl != null) {
             wave_shader.setUniform1f("uTheta", control_panel_items.theta?.valueAsNumber ?? 1.5);
             wave_shader.setUniform1f("uEta1", control_panel_items.eta1?.valueAsNumber ?? 376.9);
             wave_shader.setUniform1f("uEta2", control_panel_items.eta2?.valueAsNumber ?? 188.5);
-            gl.bindTexture(gl.TEXTURE_2D, wave_mesh.getTexture(0));
         }
     }
     function draw() {
         if (gl != null) {
             gl.clear(gl.COLOR_BUFFER_BIT);
             //draw
+            gl.bindTexture(gl.TEXTURE_2D, wave_mesh.getTexture(0));
             wave_mesh.draw(wave_shader);
+            gl.bindTexture(gl.TEXTURE_2D, ui_mesh.getTexture(0));
             ui_mesh.draw(ui_shader);
         }
     }

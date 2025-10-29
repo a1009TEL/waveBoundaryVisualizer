@@ -6,6 +6,8 @@ uniform float uEta2;
 uniform float uTheta;
 uniform float uUIAlpha;
 
+uniform sampler2D uText;
+
 in vec4 vColor;
 out vec4 outColor;
 
@@ -61,6 +63,8 @@ float arrow(in vec2 p, in vec2 a, in vec2 b){
     return min(min(tip1, tip2), main_line);
 }
 
+const float CUTS_NUMBER = 30.0;
+
 void main() {
     float ang = uTheta / 180.0 * 3.141592653589793;
 
@@ -73,6 +77,10 @@ void main() {
     float line_reflected = arrow(pos, reflected * 0.03, reflected * 0.4);
     float line_transmited = 1.0;
 
+    float center_line = sdSegment(pos,vec2(0.0,-0.5), vec2(0.0,0.5))*2.0;
+    float traversal_cuts = step(mod(vColor.y * CUTS_NUMBER, 1.0), 0.3);
+    center_line = max(center_line, traversal_cuts);
+
     float crit_angle = 1000.0;
 
     if (uEta1 < uEta2)
@@ -84,10 +92,10 @@ void main() {
         line_transmited = arrow(pos, transmited * 0.03, transmited * 0.4);
     }
 
+    float h = min(min(min(line_incidence, line_reflected), line_transmited), center_line);
 
-    float h = min(min(line_incidence, line_reflected), line_transmited);
-
-    outColor = vec4(1.0, 1.0, 1.0, step(min(h, border), 0.0025) * uUIAlpha);
-
-    // outColor = vec4(line1, 0.0, 0.0, 1.0);
+    vec4 lines = vec4(1.0, 1.0, 1.0, step(min(h, border), 0.004) * uUIAlpha);
+    vec4 text = texture(uText, vec2(vColor.x, vColor.y));
+    text = vec4(text.x, text.y, text.z, text.w * uUIAlpha);
+    outColor = max(lines, text);
 }

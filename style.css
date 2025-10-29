@@ -27,15 +27,20 @@ canvas {
   flex-direction: column; /* Stack items vertically */
   gap: 0.5rem; /* Space between each slider */
   padding: 20px; /* Padding around the container */
-  width: 340px; /* Set container width */
+  width: 310px; /* Set container width */
   border-radius: 0 0 10px 0;
   background-color: rgba(255, 255, 255, 0.05); /* Light background color */
   flex-shrink: 0;
 }
 
 #control_panel > span {
-  font-size: 1.2rem;
+  width: 100%;
+  font-size: 1.26rem;
   font-weight: bold;
+  /* color: rgba(0, 117, 255, 1); */
+  padding-top: 5px;
+  margin-top: 5px;
+  border-top: 1px dashed gray;
 }
 
 #control_panel > div {
@@ -46,4 +51,12 @@ canvas {
 
 #control_panel > div > .slider_label {
   width: 100px;
+}
+
+.slider_text_value {
+  color: gray;
+}
+
+#selector_colormap {
+  width: 200px;
 }
